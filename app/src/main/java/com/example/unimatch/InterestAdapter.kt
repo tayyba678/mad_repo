@@ -33,7 +33,7 @@ class InterestAdapter(
         holder.title.text = item.name
 
         if (item.isSelected) {
-            holder.card.setCardBackgroundColor(Color.parseColor("#F1F8E9"))
+            holder.card.setCardBackgroundColor(Color.parseColor("#FAEAFA"))
             holder.title.setTextColor(Color.parseColor("#2E7D32"))
             holder.title.paint.isFakeBoldText = true
             holder.dot.setBackgroundColor(Color.parseColor("#2E7D32"))
@@ -41,7 +41,7 @@ class InterestAdapter(
             holder.card.setCardBackgroundColor(Color.WHITE)
             holder.title.setTextColor(Color.parseColor("#1A1A2E"))
             holder.title.paint.isFakeBoldText = false
-            holder.dot.setBackgroundColor(Color.parseColor("#C8E6C9"))
+            holder.dot.setBackgroundColor(Color.parseColor("#FAEAFA"))
         }
 
         holder.checkBox.setOnCheckedChangeListener(null)
