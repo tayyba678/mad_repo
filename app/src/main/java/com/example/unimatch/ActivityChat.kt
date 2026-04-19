@@ -15,6 +15,7 @@ class ActivityChat : AppCompatActivity() {
     private lateinit var etMessage: EditText
     private lateinit var btnSend: Button
     private lateinit var btnLeave: TextView
+    private lateinit var tvUserName: TextView
 
     private val messages = mutableListOf<Message>()
     private lateinit var adapter: ChatAdapter
@@ -33,16 +34,26 @@ class ActivityChat : AppCompatActivity() {
         etMessage = findViewById(R.id.etMessage)
         btnSend = findViewById(R.id.btnSend)
         btnLeave = findViewById(R.id.btnLeave)
+        tvUserName = findViewById(R.id.tvUserName)
 
         matchUid = intent.getStringExtra("matchUid")
 
-        val myUid = auth.currentUser?.uid ?: return
+        val myUid = auth.currentUser?.uid
+        val otherUid = matchUid
 
-        // 🔥 CHAT ID
-        chatId = if (myUid < matchUid!!) {
-            myUid + "_" + matchUid
+        if (myUid == null || otherUid == null) {
+            Toast.makeText(this, "No match found. Try again!", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, InterestActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
+            finish()
+            return
+        }
+
+        chatId = if (myUid < otherUid) {
+            "${myUid}_${otherUid}"
         } else {
-            matchUid + "_" + myUid
+            "${otherUid}_${myUid}"
         }
 
         adapter = ChatAdapter(messages)
@@ -50,24 +61,51 @@ class ActivityChat : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         listenMessages()
+        loadOtherUser()
 
         btnSend.setOnClickListener {
             sendMessage()
         }
 
-        // 🔴 LEAVE BUTTON
+        // ✅ Confirmation dialog before leaving
         btnLeave.setOnClickListener {
-
-            val intent = Intent(this, InterestActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-
-            finish()
+            android.app.AlertDialog.Builder(this)
+                .setTitle("Leave Chat")
+                .setMessage("Are you sure you want to leave this chat?")
+                .setPositiveButton("Leave") { _, _ ->
+                    startActivity(Intent(this, InterestActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    })
+                    finish()
+                }
+                .setNegativeButton("Stay", null)
+                .show()
         }
     }
 
-    private fun sendMessage() {
+    private fun loadOtherUser() {
+        val otherUid = matchUid ?: return
 
+        db.collection("users").document(otherUid)
+            .get()
+            .addOnSuccessListener { doc ->
+                if (doc.exists()) {
+                    val name = doc.getString("name") ?: "User"
+                    tvUserName.text = name
+
+                    tvUserName.setOnClickListener {
+                        val intent = Intent(this, UserProfile::class.java)
+                        intent.putExtra("uid", otherUid)
+                        startActivity(intent)
+                    }
+                }
+            }
+            .addOnFailureListener {
+                tvUserName.text = "User"
+            }
+    }
+
+    private fun sendMessage() {
         val text = etMessage.text.toString().trim()
         val uid = auth.currentUser?.uid ?: return
 
@@ -83,17 +121,24 @@ class ActivityChat : AppCompatActivity() {
             .document(chatId)
             .collection("messages")
             .add(msg)
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to send message", Toast.LENGTH_SHORT).show()
+            }
 
         etMessage.setText("")
     }
 
     private fun listenMessages() {
-
         db.collection("chats")
             .document(chatId)
             .collection("messages")
             .orderBy("timestamp")
-            .addSnapshotListener { value, _ ->
+            .addSnapshotListener { value, error ->
+
+                if (error != null) {
+                    Toast.makeText(this, "Failed to load messages", Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
+                }
 
                 messages.clear()
 
@@ -103,7 +148,10 @@ class ActivityChat : AppCompatActivity() {
                 }
 
                 adapter.notifyDataSetChanged()
-                recyclerView.scrollToPosition(messages.size - 1)
+
+                if (messages.isNotEmpty()) {
+                    recyclerView.scrollToPosition(messages.size - 1)
+                }
             }
     }
 }

@@ -22,57 +22,79 @@ class Match : AppCompatActivity() {
     }
 
     private fun findMatch() {
-
-        val currentUid = auth.currentUser?.uid ?: return
+        val currentUid = auth.currentUser?.uid ?: run {
+            Toast.makeText(this, "Session expired. Please login again.", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, LoginScreen::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
+            finish()
+            return
+        }
 
         db.collection("users").document(currentUid).get()
             .addOnSuccessListener { currentDoc ->
-
                 val myInterests = currentDoc.get("interests") as? List<String> ?: emptyList()
 
                 db.collection("users").get()
                     .addOnSuccessListener { result ->
 
-                        var bestUid: String? = null
-                        var bestScore = 0
+                        data class Candidate(val uid: String, val score: Int)
+
+                        val candidates = mutableListOf<Candidate>()
 
                         for (doc in result.documents) {
-
                             val uid = doc.id
                             if (uid == currentUid) continue
 
                             val otherInterests = doc.get("interests") as? List<String> ?: emptyList()
+                            val score = myInterests.intersect(otherInterests.toSet()).size
 
-                            val common = myInterests.intersect(otherInterests.toSet()).size
-
-                            if (common > bestScore) {
-                                bestScore = common
-                                bestUid = uid
+                            if (score > 0) {
+                                candidates.add(Candidate(uid, score))
                             }
                         }
 
-                        // ⏳ FAKE LOADING DELAY (3 sec)
+                        // ✅ Pick best match by highest score
+                        val bestMatch = candidates.sortedByDescending { it.score }.firstOrNull()
+
                         Handler(Looper.getMainLooper()).postDelayed({
 
-                            if (bestUid == null) {
-                                Toast.makeText(this, "No match found", Toast.LENGTH_SHORT).show()
-                            } else {
-
+                            if (bestMatch == null) {
+                                // ✅ No match found → back to InterestActivity
                                 Toast.makeText(
                                     this,
-                                    "Match Found!",
-                                    Toast.LENGTH_SHORT
+                                    "No match found. Try updating your interests!",
+                                    Toast.LENGTH_LONG
                                 ).show()
+                                startActivity(Intent(this, InterestActivity::class.java).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                })
+                                finish()
 
-                                // 👉 MOVE TO CHAT
-                                val intent = Intent(this@Match, ActivityChat::class.java)
-                                intent.putExtra("matchUid", bestUid)
-                                startActivity(intent)
+                            } else {
+                                Toast.makeText(this, "Match Found!", Toast.LENGTH_SHORT).show()
+                                startActivity(Intent(this, ActivityChat::class.java).apply {
+                                    putExtra("matchUid", bestMatch.uid)
+                                })
                                 finish()
                             }
 
                         }, 3000)
                     }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Matching failed: ${it.message}", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, InterestActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        })
+                        finish()
+                    }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Could not load your profile: ${it.message}", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, InterestActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                })
+                finish()
             }
     }
 }

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#FFFFFF">
 
-    <!-- TOP BAR (NORMAL) -->
+    <!-- TOP BAR -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="55dp"
@@ -15,17 +16,20 @@
         android:paddingEnd="12dp"
         android:background="#F3EAF6">
 
-        <!-- TITLE -->
         <TextView
+            android:id="@+id/tvUserName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Chat"
+            android:text="User"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#222"/>
+            android:textColor="#222222"
+            android:clickable="true"
+            android:focusable="true"
+            app:drawableStartCompat="@android:drawable/ic_menu_myplaces"
+            android:drawablePadding="8dp"/>
 
-        <!-- 🔴 SMALL LEAVE BUTTON -->
         <TextView
             android:id="@+id/btnLeave"
             android:layout_width="wrap_content"
@@ -59,6 +63,8 @@
             android:layout_height="50dp"
             android:layout_weight="1"
             android:hint="Type a message"
+            android:textColor="#1A1A2E"
+            android:textColorHint="#AAAAAA"
             android:background="@drawable/bg_input_white"
             android:padding="12dp"/>
 
@@ -68,7 +74,7 @@
             android:layout_height="50dp"
             android:text="Send"
             android:background="#4CAF50"
-            android:textColor="#FFF"
+            android:textColor="#FFFFFF"
             android:layout_marginStart="8dp"/>
     </LinearLayout>
 

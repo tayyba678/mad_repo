@@ -11,58 +11,79 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import android.widget.LinearLayout
 
 class InterestActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var btnContinue: Button
     private lateinit var adapter: InterestAdapter
+    private lateinit var selectedCount: TextView  // ✅
 
-    // 🔥 DRAWER
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var menuBtn: TextView
-    private lateinit var btnProfile: TextView
-    private lateinit var btnLogout: TextView
+    private lateinit var btnProfile: LinearLayout
+    private lateinit var btnLogout: LinearLayout
 
-    // 🔥 FIREBASE
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
     private val interests = arrayListOf(
+
+        // CS / SOFTWARE
         Interest("Programming"),
-        Interest("Data Structures"),
-        Interest("Algorithms"),
+        Interest("Data Structures & Algorithms"),
         Interest("OOP"),
         Interest("Software Engineering"),
         Interest("Artificial Intelligence"),
-        Interest("Machine Learning"),
-        Interest("Deep Learning"),
         Interest("Data Science"),
-        Interest("Big Data"),
-        Interest("Data Analysis"),
-        Interest("Gaming"),
-        Interest("Esports"),
-        Interest("Mobile Gaming"),
-        Interest("PC Gaming"),
-        Interest("Game Development"),
-        Interest("Game Design"),
         Interest("Web Development"),
-        Interest("Frontend Development"),
-        Interest("Backend Development"),
-        Interest("Full Stack Development"),
         Interest("Mobile App Development"),
         Interest("Cloud Computing"),
         Interest("DevOps"),
         Interest("Operating Systems"),
         Interest("Cyber Security"),
-        Interest("Ethical Hacking"),
         Interest("Computer Networks"),
         Interest("Database Systems"),
         Interest("UI/UX Design"),
+        Interest("Game Development"),
+
+        // ELECTRICAL / ELECTRONICS
+        Interest("Circuit Design"),
+        Interest("Embedded Systems"),
+        Interest("IoT"),
+        Interest("Robotics"),
+        Interest("Power & Control Systems"),
+
+        // MECHANICAL / CIVIL / CHEMICAL (Merged)
+        Interest("CAD & 3D Design"),
+        Interest("Thermodynamics & Fluid Mechanics"),
+        Interest("Manufacturing"),
+        Interest("Automotive Engineering"),
+        Interest("Renewable Energy"),
+        Interest("Structural & Construction"),
+        Interest("Environmental Engineering"),
+        Interest("Material Science"),
+
+        // GENERAL / EXTRA
+        Interest("Gaming"),
         Interest("Entrepreneurship"),
-        Interest("Product Management"),
         Interest("Research"),
-        Interest("Public Speaking")
+        Interest("Public Speaking"),
+        Interest("Graphic Design"),
+        Interest("Photography & Video Editing"),
+        Interest("Content Creation"),
+        Interest("Music"),
+        Interest("Sports"),
+        Interest("Fitness"),
+        Interest("Reading"),
+        Interest("Debating"),
+        Interest("Community Service"),
+        Interest("Event Management"),
+        Interest("Teaching"),
+        Interest("Finance & Investment"),
+        Interest("Freelancing")
+
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,36 +92,42 @@ class InterestActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.recyclerView)
         btnContinue = findViewById(R.id.btnContinue)
-
         drawerLayout = findViewById(R.id.drawerLayout)
         menuBtn = findViewById(R.id.menuBtn)
         btnProfile = findViewById(R.id.btnProfile)
         btnLogout = findViewById(R.id.btnLogout)
+        selectedCount = findViewById(R.id.selectedCount)  // ✅
 
-        adapter = InterestAdapter(interests)
+        // ✅ Pass callback to update counter
+        adapter = InterestAdapter(interests) { count ->
+            selectedCount.text = "$count selected"
+        }
+
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
-        // ☰ OPEN DRAWER
         menuBtn.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
         }
 
-        // 👤 PROFILE
         btnProfile.setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
             startActivity(Intent(this, Profilee::class.java))
         }
 
-        // 🚪 LOGOUT
         btnLogout.setOnClickListener {
-
-            auth.signOut()
-
-            val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-
-            finish()
+            android.app.AlertDialog.Builder(this)
+                .setTitle("Sign Out")
+                .setMessage("Are you sure you want to sign out?")
+                .setPositiveButton("Sign Out") { _, _ ->
+                    auth.signOut()
+                    startActivity(Intent(this, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    })
+                    finish()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
 
         btnContinue.setOnClickListener {
@@ -109,7 +136,6 @@ class InterestActivity : AppCompatActivity() {
     }
 
     private fun handleContinue() {
-
         val selected = interests.filter { it.isSelected }
 
         if (selected.isEmpty()) {
@@ -117,36 +143,35 @@ class InterestActivity : AppCompatActivity() {
             return
         }
 
-        val uid = auth.currentUser?.uid
-
-        if (uid == null) {
-            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+        val uid = auth.currentUser?.uid ?: run {
+            Toast.makeText(this, "Session expired. Please login again.", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, LoginScreen::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
+            finish()
             return
         }
 
-        val selectedList = selected.map { it.name }
-
-        // 🔥 SAVE ONLY INTERESTS (MERGE WITH EXISTING USER DATA)
-
+        btnContinue.isEnabled = false
 
         val data = hashMapOf(
-            "interests" to selectedList,
+            "interests" to selected.map { it.name },
             "updatedAt" to System.currentTimeMillis()
         )
 
         db.collection("users")
             .document(uid)
-            .set(data, SetOptions.merge())   // ⭐ IMPORTANT LINE
+            .set(data, SetOptions.merge())
             .addOnSuccessListener {
-
-                Toast.makeText(this, "Interests saved successfully", Toast.LENGTH_SHORT).show()
-
-                // 👉 NEXT SCREEN (optional)
-                // startActivity(Intent(this, MatchActivity::class.java))
-
+                Toast.makeText(this, "Interests saved!", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, Match::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                })
+                finish()
             }
             .addOnFailureListener {
-                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                btnContinue.isEnabled = true
+                Toast.makeText(this, "Failed: ${it.message}", Toast.LENGTH_SHORT).show()
             }
     }
 }
