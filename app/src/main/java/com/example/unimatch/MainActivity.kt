@@ -17,51 +17,66 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Show splash for 2 seconds then run the 3-gate routing check
         Handler(Looper.getMainLooper()).postDelayed({
+            routeUser()
+        }, AppConstants.SPLASH_DELAY_MS)
+    }
 
-            val user = auth.currentUser
+    // 3-gate router: gate 1 = signed in, gate 2 = email verified, gate 3 = profile complete
+    private fun routeUser() {
+        val user = auth.currentUser
 
-            if (user == null) {
+        // Gate 1: no Firebase Auth user at all → Sign Up
+        if (user == null) {
+            goTo(SignUp::class.java)
+            return
+        }
 
-                startActivity(Intent(this, LoginScreen::class.java))
-                finish()
+        // Reload to get the latest isEmailVerified status from Firebase servers
+        user.reload().addOnCompleteListener { reloadTask ->
 
-            } else {
-
-                val uid = user.uid
-
-                db.collection("users").document(uid).get()
-                    .addOnSuccessListener { document ->
-
-                        if (document.exists()
-                            && document.contains("name")
-                            && document.contains("interests")
-                        ) {
-
-                            // ✅ FULL USER READY
-                            startActivity(Intent(this, InterestActivity::class.java))
-
-                        } else if (document.exists()) {
-
-                            // ⚠️ profile exists but interests missing
-                            startActivity(Intent(this, InterestActivity::class.java))
-
-                        } else {
-
-                            // ❌ no profile
-                            startActivity(Intent(this, User_registration::class.java))
-                        }
-
-                        finish()
-                    }
-                    .addOnFailureListener {
-
-                        // fallback
-                        startActivity(Intent(this, LoginScreen::class.java))
-                        finish()
-                    }
+            // Gate 2: email not verified → Email Verification screen
+            if (!user.isEmailVerified) {
+                goTo(EmailVerification::class.java)
+                return@addOnCompleteListener
             }
 
-        }, 1500)
+            // Gate 3: check Firestore for profileComplete flag
+            db.collection(AppConstants.COLLECTION_USERS)
+                .document(user.uid)
+                .get()
+                .addOnSuccessListener { doc ->
+                    val profileComplete = doc.getBoolean(AppConstants.FIELD_PROFILE_COMPLETE) ?: false
+
+                    if (!doc.exists() || !profileComplete) {
+                        // Profile not finished → Profile Setup
+                        goTo(User_registration::class.java)
+                    } else {
+                        // All 3 gates passed → Main app (Interest/Match screen)
+                        goTo(InterestActivity::class.java)
+                    }
+                }
+                .addOnFailureListener {
+                    // Firestore read failed — safe fallback is login screen
+                    goTo(LoginScreen::class.java)
+                }
+        }.addOnFailureListener {
+            // Reload failed (no internet) — check cached value
+            if (!user.isEmailVerified) {
+                goTo(EmailVerification::class.java)
+            } else {
+                // Trust cached Firestore if available, else send to login
+                goTo(LoginScreen::class.java)
+            }
+        }
+    }
+
+    // Navigates to a screen and clears the back stack so user cannot go back to splash
+    private fun goTo(destination: Class<*>) {
+        startActivity(Intent(this, destination).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        })
+        finish()
     }
 }

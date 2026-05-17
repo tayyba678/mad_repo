@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAFAFC"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="28dp">
+
+    <!-- Email icon placeholder -->
+    <ImageView
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:src="@drawable/logo"
+        android:contentDescription="Email Verification"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Verify Your Email"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#1A1A2E"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- Dynamic instruction text set in code -->
+    <TextView
+        android:id="@+id/tvInstruction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="A verification link has been sent to your university email."
+        android:textSize="14sp"
+        android:textColor="#555555"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:layout_marginBottom="36dp"/>
+
+    <!-- Primary action -->
+    <Button
+        android:id="@+id/btnVerified"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="I Have Verified"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:background="@drawable/bg_button"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Resend button — disabled during cooldown -->
+    <Button
+        android:id="@+id/btnResend"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Resend Email"
+        android:textColor="#7D559D"
+        android:textSize="14sp"
+        android:background="@android:color/transparent"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Countdown timer shown during cooldown -->
+    <TextView
+        android:id="@+id/tvResendTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Resend available in 60s"
+        android:textSize="12sp"
+        android:textColor="#AAAAAA"
+        android:visibility="gone"/>
+
+</LinearLayout>

@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Internet required for all Firebase operations -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- RECORD_AUDIO and photo picker permissions added in Phase 3 when chat media is built -->
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,51 +16,32 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UniMatch">
-        <activity
-            android:name=".UserProfile"
-            android:exported="false" />
-        <activity
-            android:name=".Chatadapter"
-            android:exported="false" />
-        <activity
-            android:name=".ActivityChat"
-            android:exported="false" />
-        <activity
-            android:name=".Match"
-            android:exported="false" />
-        <activity
-            android:name=".Profilee"
-            android:exported="false" />
-        <activity
-            android:name=".Profile"
-            android:exported="false" />
-        <activity
-            android:name=".Interest"
-            android:exported="false" />
-        <activity
-            android:name=".InterestAdapter"
-            android:exported="false" />
-        <activity
-            android:name=".InterestActivity"
-            android:exported="false" />
-        <activity
-            android:name=".User_registration"
-            android:exported="false" />
-        <activity
-            android:name=".SignUp"
-            android:exported="false" />
-        <activity
-            android:name=".LoginScreen"
-            android:exported="false" />
+
+        <!-- LAUNCHER — splash + 3-gate router -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- AUTH SCREENS -->
+        <activity android:name=".SignUp" android:exported="false" />
+        <activity android:name=".LoginScreen" android:exported="false" />
+        <activity android:name=".EmailVerification" android:exported="false" />
+
+        <!-- ONBOARDING -->
+        <activity android:name=".User_registration" android:exported="false" />
+
+        <!-- MAIN APP -->
+        <activity android:name=".InterestActivity" android:exported="false" />
+        <activity android:name=".Match" android:exported="false" />
+        <activity android:name=".ActivityChat" android:exported="false" />
+        <activity android:name=".Profilee" android:exported="false" />
+        <activity android:name=".UserProfile" android:exported="false" />
+
     </application>
 
 </manifest>

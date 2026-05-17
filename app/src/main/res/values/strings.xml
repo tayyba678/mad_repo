@@ -1,3 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App name -->
     <string name="app_name">UniMatch</string>
+
+    <!-- EmailVerification screen -->
+    <string name="ev_title">Verify Your Email</string>
+    <string name="ev_fallback_email">your university email</string>
+    <string name="ev_instruction">A verification link has been sent to %1$s. Open it, then tap the button below.</string>
+    <string name="ev_btn_verified">I Have Verified</string>
+    <string name="ev_btn_checking">Checking…</string>
+    <string name="ev_btn_resend">Resend Email</string>
+    <string name="ev_timer">Resend available in %1$ds</string>
+    <string name="ev_not_verified_yet">Email not verified yet. Check your inbox and click the link.</string>
+    <string name="ev_check_failed">Could not check status. Check your internet connection.</string>
+    <string name="ev_resend_success">Verification email sent again.</string>
+    <string name="ev_resend_failed">Failed to resend. Try again in a moment.</string>
+    <string name="ev_session_expired">Session expired. Please sign up again.</string>
+
 </resources>
