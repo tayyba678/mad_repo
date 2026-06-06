@@ -13,29 +13,50 @@
         android:id="@+id/layoutReceived"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
+        android:gravity="bottom"
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/tvSenderName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="11sp"
+            android:id="@+id/tvInitialLeft"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_avatar_circle"
+            android:backgroundTint="@color/primary"
+            android:gravity="center"
+            android:text="U"
+            android:textColor="@color/white"
+            android:textSize="14sp"
             android:textStyle="bold"
-            android:textColor="#8A30D1"
-            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="2dp"/>
 
-        <TextView
-            android:id="@+id/msgTextLeft"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="260dp"
-            android:padding="10dp"
-            android:textColor="#1A1A2E"
-            android:textSize="14sp"
-            android:background="@drawable/bg_message_left"
-            android:layout_gravity="start"/>
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvSenderName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="#8A30D1"
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="2dp"/>
+
+            <TextView
+                android:id="@+id/msgTextLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="260dp"
+                android:padding="10dp"
+                android:textColor="#1A1A2E"
+                android:textSize="14sp"
+                android:background="@drawable/bg_message_left"
+                android:layout_gravity="start"/>
+        </LinearLayout>
 
     </LinearLayout>
 

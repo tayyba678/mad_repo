@@ -3,10 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F6FA"
+    android:background="@color/secondary"
     android:fillViewport="true">
 
     <LinearLayout
+        android:id="@+id/profileLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -17,75 +18,71 @@
         <!-- HEADER -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_height="220dp"
             android:orientation="vertical"
             android:gravity="center"
-            android:background="#E3FAE9"
+            android:background="@color/primary"
             android:layout_marginStart="-20dp"
             android:layout_marginEnd="-20dp"
-            android:paddingBottom="28dp">
+            android:paddingBottom="20dp">
 
-            <FrameLayout
-                android:layout_width="80dp"
-                android:layout_height="80dp">
-
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/logo"
-                    android:background="@drawable/bg_avatar_circle"
-                    android:scaleType="centerCrop"
-                    android:padding="4dp"/>
-            </FrameLayout>
+            <TextView
+                android:id="@+id/nameInitial"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/bg_avatar_circle"
+                android:backgroundTint="@color/mint"
+                android:gravity="center"
+                android:text="U"
+                android:textColor="@color/primary"
+                android:textSize="40sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/headerName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Your Name"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:textSize="20sp"
                 android:textStyle="bold"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="12dp"/>
 
             <TextView
                 android:id="@+id/headerDept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Department"
-                android:textColor="#E8F5E9"
-                android:textSize="13sp"
+                android:textColor="@color/mint"
+                android:textSize="14sp"
                 android:layout_marginTop="2dp"/>
         </LinearLayout>
 
         <!-- CARD -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/infoCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="24dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="#FFFFFF"
-            android:layout_marginTop="-20dp">
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@color/white"
+            android:layout_marginTop="-30dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                android:paddingTop="28dp"
-                android:paddingBottom="24dp">
+                android:padding="24dp">
 
-                <!-- SECTION -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="PERSONAL INFO"
-                    android:textSize="11sp"
+                    android:text="EDIT PROFILE"
+                    android:textSize="12sp"
                     android:textStyle="bold"
-                    android:textColor="#AAAAAA"
-                    android:letterSpacing="0.12"
-                    android:layout_marginBottom="16dp"/>
+                    android:textColor="@color/gray"
+                    android:letterSpacing="0.1"
+                    android:layout_marginBottom="20dp"/>
 
                 <!-- NAME -->
                 <TextView
@@ -94,7 +91,7 @@
                     android:text="Full Name"
                     android:textSize="12sp"
                     android:textStyle="bold"
-                    android:textColor="#555555"
+                    android:textColor="@color/primary"
                     android:layout_marginBottom="6dp"/>
 
                 <EditText
@@ -102,13 +99,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:hint="Enter full name"
-                    android:textColor="#1A1A2E"
-                    android:textColorHint="#CCCCCC"
-                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/gray"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:background="@drawable/bg_input_white"
-                    android:inputType="textPersonName"
                     android:layout_marginBottom="16dp"/>
 
                 <!-- REG NO -->
@@ -118,7 +113,7 @@
                     android:text="Registration Number"
                     android:textSize="12sp"
                     android:textStyle="bold"
-                    android:textColor="#555555"
+                    android:textColor="@color/primary"
                     android:layout_marginBottom="6dp"/>
 
                 <EditText
@@ -126,9 +121,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:hint="e.g. 2021-CS-123"
-                    android:textColor="#1A1A2E"
-                    android:textColorHint="#CCCCCC"
-                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/gray"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:background="@drawable/bg_input_white"
@@ -141,7 +135,7 @@
                     android:text="Department"
                     android:textSize="12sp"
                     android:textStyle="bold"
-                    android:textColor="#555555"
+                    android:textColor="@color/primary"
                     android:layout_marginBottom="6dp"/>
 
                 <FrameLayout
@@ -154,8 +148,7 @@
                         android:id="@+id/departmentSpinner"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"/>
+                        android:paddingStart="12dp"/>
                 </FrameLayout>
 
                 <!-- YEAR -->
@@ -165,9 +158,8 @@
                     android:text="Admission Year"
                     android:textSize="12sp"
                     android:textStyle="bold"
-                    android:textColor="#555555"
+                    android:textColor="@color/primary"
                     android:layout_marginBottom="6dp"/>
-
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -179,9 +171,9 @@
                         android:id="@+id/admissionYearSpinner"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"/>
+                        android:paddingStart="12dp"/>
                 </FrameLayout>
+
                 <!-- PHONE -->
                 <TextView
                     android:layout_width="wrap_content"
@@ -189,7 +181,7 @@
                     android:text="Phone Number"
                     android:textSize="12sp"
                     android:textStyle="bold"
-                    android:textColor="#555555"
+                    android:textColor="@color/primary"
                     android:layout_marginBottom="6dp"/>
 
                 <EditText
@@ -197,33 +189,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:hint="03XXXXXXXXX"
-                    android:textColor="#1A1A2E"
-                    android:textColorHint="#CCCCCC"
-                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/gray"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:background="@drawable/bg_input_white"
-                    android:inputType="phone"
-                    android:layout_marginBottom="24dp"/>
-
-                <!-- DIVIDER -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#F0F0F0"
-                    android:layout_marginBottom="24dp"/>
+                    android:layout_marginBottom="28dp"/>
 
                 <!-- BUTTON -->
                 <Button
                     android:id="@+id/updateBtn"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
-                    android:text="Save Changes"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
+                    android:text="Update Profile"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
                     android:background="@drawable/bg_button_green"
-                    android:letterSpacing="0.04"/>
+                    android:letterSpacing="0.05"/>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>

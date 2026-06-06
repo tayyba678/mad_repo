@@ -1,121 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FAFAFC"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:background="@color/mint"
+    android:fillViewport="true">
 
-    <!-- Logo + App Name -->
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/mainLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        android:layout_marginBottom="30dp">
+        android:padding="24dp">
 
-        <ImageView
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:src="@drawable/logo"
-            android:contentDescription="UniMatch Logo"/>
-
-        <TextView
+        <!-- LOGO CARD -->
+        <LinearLayout
+            android:id="@+id/logoCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="UniMatch"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="#2C2C2C"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sign In"
-            android:textSize="14sp"
-            android:textColor="#666666"
-            android:layout_marginTop="4dp"/>
-    </LinearLayout>
-
-    <!-- Inputs -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/email"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:hint="Email"
-            android:textColor="#000000"
-            android:textColorHint="#9E9E9E"
-            android:padding="14dp"
-            android:background="@drawable/bg_input"
-            android:inputType="textEmailAddress"/>
-
-        <!-- PASSWORD WITH EYE TOGGLE -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="12dp">
-
-            <EditText
-                android:id="@+id/password"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:hint="Password"
-                android:textColor="#000000"
-                android:textColorHint="#9E9E9E"
-                android:paddingStart="14dp"
-                android:paddingEnd="52dp"
-                android:paddingTop="14dp"
-                android:paddingBottom="14dp"
-                android:background="@drawable/bg_input"
-                android:inputType="textPassword"/>
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/bg_card_rounded"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="20dp">
 
             <ImageView
-                android:id="@+id/togglePassword"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="14dp"
-                android:src="@drawable/is_eye_off"
-                android:contentDescription="Toggle password visibility"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="2dp"/>
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:src="@drawable/logo" />
 
-        </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="UniMatch"
+                android:textColor="@color/primary"
+                android:textSize="26sp"
+                android:textStyle="bold" />
 
-        <!-- LOGIN BUTTON -->
-        <Button
-            android:id="@+id/loginBtn"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Login"
+                android:textColor="@color/gray"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <!-- LOGIN CARD -->
+        <LinearLayout
+            android:id="@+id/loginCard"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:text="Sign In"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/bg_button"
-            android:textColor="#FFFFFF"/>
-
-        <!-- GO TO SIGNUP -->
-        <TextView
-            android:id="@+id/goRegister"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create account"
-            android:textSize="14sp"
-            android:textColor="#666666"
-            android:layout_marginTop="16dp"
-            android:layout_gravity="center"
-            android:clickable="true"
-            android:focusable="true"/>
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:background="@drawable/bg_card_rounded">
 
+            <!-- EMAIL -->
+            <EditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:hint="University Email"
+                android:background="@drawable/bg_input"
+                android:padding="16dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray"
+                android:inputType="textEmailAddress"/>
+
+            <!-- PASSWORD -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="14dp">
+
+                <EditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:hint="Password"
+                    android:background="@drawable/bg_input"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="55dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/gray"
+                    android:inputType="textPassword"/>
+
+                <ImageView
+                    android:id="@+id/togglePassword"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/is_eye_off"/>
+            </RelativeLayout>
+
+            <!-- LOGIN BUTTON -->
+            <Button
+                android:id="@+id/loginBtn"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:text="Login"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_button"
+                android:textColor="@color/white"
+                android:textStyle="bold"/>
+
+            <!-- FORGOT PASSWORD -->
+            <TextView
+                android:id="@+id/forgotPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Forgot Password?"
+                android:textColor="@color/primary"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="center"/>
+
+            <!-- GO TO SIGNUP -->
+            <TextView
+                android:id="@+id/goRegister"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Don't have an account? Create Account"
+                android:textColor="@color/gray"
+                android:layout_marginTop="14dp"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
     </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

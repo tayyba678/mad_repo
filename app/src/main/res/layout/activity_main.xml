@@ -1,51 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:orientation="vertical"
     android:gravity="center"
-    android:orientation="vertical">
+    android:background="@color/mint">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="250dp"
-        android:layout_height="300dp"
+        android:layout_width="260dp"
+        android:layout_height="310dp"
         android:layout_margin="20dp"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="10dp"
-        app:cardBackgroundColor="#FAEAFA">
+        app:cardCornerRadius="24dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/pink">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center">
 
             <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/ic_launcher_foreground" />
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:src="@drawable/logo"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="UniMatch"
-                android:textSize="24sp"
+                android:textSize="28sp"
                 android:textStyle="bold"
-                android:textColor="#2E2E2E"
-                android:layout_marginTop="10dp"/>
+                android:textColor="@color/primary"
+                android:layout_marginTop="12dp"/>
 
-            <!-- Horizontal Progress Bar -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="University Networking Platform"
+                android:textColor="@color/gray"
+                android:textSize="13sp"
+                android:layout_marginTop="4dp"/>
+
             <ProgressBar
-                android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="200dp"
-                android:layout_height="8dp"
-                android:layout_marginTop="20dp"
+                android:layout_width="190dp"
+                android:layout_height="10dp"
+                android:layout_marginTop="24dp"
                 android:indeterminate="true"
-                android:progressTint="#7B2CBF" />
+                android:progressTint="@color/primary"/>
 
         </LinearLayout>
 

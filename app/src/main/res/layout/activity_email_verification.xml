@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@color/mint">
+
+    <LinearLayout
+        android:id="@+id/verificationCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/bg_card_rounded"
+        android:padding="24dp"
+        android:elevation="8dp">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/logo"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Verify Your Email"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/primary"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="A verification link has been sent to your university email address. Please click it to continue."
+            android:textSize="14sp"
+            android:textColor="@color/gray"
+            android:gravity="center"
+            android:layout_marginTop="12dp"/>
+
+        <!-- CONTINUE / CHECK MANUALLY -->
+        <Button
+            android:id="@+id/checkVerifyBtn"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="I have verified"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_button"
+            android:textColor="@color/white"
+            android:textStyle="bold"/>
+
+        <!-- TIMER & RESEND -->
+        <TextView
+            android:id="@+id/timerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Resend available in 30 sec"
+            android:textSize="13sp"
+            android:textColor="@color/primary"
+            android:layout_marginTop="20dp"/>
+
+        <Button
+            android:id="@+id/resendBtn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Resend Verification Email"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_button_green"
+            android:textColor="@color/white"
+            android:enabled="false"
+            android:alpha="0.5"/>
+
+        <!-- BACK TO SIGNUP -->
+        <TextView
+            android:id="@+id/goBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Entered wrong email? Go back"
+            android:textColor="@color/gray"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:padding="12dp"
+            android:layout_marginTop="16dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>

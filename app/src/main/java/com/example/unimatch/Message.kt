@@ -1,7 +1,7 @@
 package com.example.unimatch
 
 data class Message(
-    val senderId: String = "",
-    val message: String = "",
-    val timestamp: Long = 0
+    var senderId: String = "",
+    var message: String = "",
+    var timestamp: Long = 0L
 )

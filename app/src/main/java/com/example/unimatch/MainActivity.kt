@@ -21,46 +21,41 @@ class MainActivity : AppCompatActivity() {
 
             val user = auth.currentUser
 
+            // 1. Check if user is logged in
             if (user == null) {
-
                 startActivity(Intent(this, LoginScreen::class.java))
                 finish()
-
-            } else {
-
-                val uid = user.uid
-
-                db.collection("users").document(uid).get()
-                    .addOnSuccessListener { document ->
-
-                        if (document.exists()
-                            && document.contains("name")
-                            && document.contains("interests")
-                        ) {
-
-                            // ✅ FULL USER READY
-                            startActivity(Intent(this, InterestActivity::class.java))
-
-                        } else if (document.exists()) {
-
-                            // ⚠️ profile exists but interests missing
-                            startActivity(Intent(this, InterestActivity::class.java))
-
-                        } else {
-
-                            // ❌ no profile
-                            startActivity(Intent(this, User_registration::class.java))
-                        }
-
-                        finish()
-                    }
-                    .addOnFailureListener {
-
-                        // fallback
-                        startActivity(Intent(this, LoginScreen::class.java))
-                        finish()
-                    }
+                return@postDelayed
             }
+
+            // 2. Check if email is verified
+            if (!user.isEmailVerified) {
+                // If not verified, they must go through the verification flow again
+                startActivity(Intent(this, EmailVerificationActivity::class.java))
+                finish()
+                return@postDelayed
+            }
+
+            // 3. Check if Profile Registration is complete
+            db.collection("users")
+                .document(user.uid)
+                .get()
+                .addOnSuccessListener { document ->
+                    // Check if 'name' exists - if yes, profile is complete
+                    if (document.exists() && document.contains("name")) {
+                        startActivity(Intent(this, DashBoardActivity::class.java))
+                    } else {
+                        // User exists but profile isn't filled yet
+                        startActivity(Intent(this, User_registration::class.java))
+                    }
+                    finish()
+                }
+                .addOnFailureListener {
+                    // Fallback to Login on error
+                    auth.signOut()
+                    startActivity(Intent(this, LoginScreen::class.java))
+                    finish()
+                }
 
         }, 1500)
     }

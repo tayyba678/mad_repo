@@ -3,10 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FF"
+    android:background="@color/secondary"
     android:fillViewport="true">
 
     <LinearLayout
+        android:id="@+id/mainLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -19,68 +20,65 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="24dp">
 
-            <ImageView
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:src="@drawable/logo"/>
+            <TextView
+                android:id="@+id/nameInitial"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/bg_avatar_circle"
+                android:backgroundTint="@color/primary"
+                android:gravity="center"
+                android:text="U"
+                android:textColor="@color/white"
+                android:textSize="40sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Create Profile"
-                android:textSize="22sp"
+                android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="#1A1A2E"
-                android:layout_marginTop="12dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fill in your university details"
-                android:textSize="13sp"
-                android:textColor="#888888"
-                android:layout_marginTop="4dp"/>
-
+                android:textColor="@color/primary"
+                android:layout_marginTop="16dp"/>
         </LinearLayout>
 
         <!-- MAIN CARD -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/registrationCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="#FAE3E7"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="12dp"
+            app:cardBackgroundColor="@color/mint"
             android:layout_marginBottom="24dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="24dp">
 
                 <!-- FULL NAME -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Full Name"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     android:textStyle="bold"
-                    android:textColor="#555555"
+                    android:textColor="@color/primary"
                     android:layout_marginBottom="6dp"/>
 
                 <EditText
                     android:id="@+id/name"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="52dp"
                     android:hint="e.g. Ahmed Raza"
-                    android:textSize="13sp"
-                    android:textColor="#1A1A2E"
-                    android:textColorHint="#BBBBBB"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
                     android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
                     android:background="@drawable/bg_input_white"
                     android:inputType="textPersonName"
                     android:layout_marginBottom="16dp"/>
@@ -90,62 +88,42 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Registration Number"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     android:textStyle="bold"
-                    android:textColor="#555555"
+                    android:textColor="@color/primary"
                     android:layout_marginBottom="6dp"/>
 
                 <EditText
                     android:id="@+id/regNo"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:hint="e.g. 2021-CS-123"
-                    android:textSize="13sp"
-                    android:textColor="#1A1A2E"
-                    android:textColorHint="#BBBBBB"
+                    android:layout_height="52dp"
+                    android:hint="e.g. 2023-CS-130"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
                     android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
                     android:background="@drawable/bg_input_white"
-                    android:inputType="text"
                     android:layout_marginBottom="16dp"/>
 
-                <!-- DEPARTMENT -->
+                <!-- SEARCHABLE DEPARTMENT -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Department"
-                    android:textSize="12sp"
+                    android:text="Department (Searchable)"
+                    android:textSize="13sp"
                     android:textStyle="bold"
-                    android:textColor="#555555"
+                    android:textColor="@color/primary"
                     android:layout_marginBottom="6dp"/>
 
-                <FrameLayout
+                <AutoCompleteTextView
+                    android:id="@+id/departmentSearch"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="@drawable/bg_input_white"
-                    android:layout_marginBottom="6dp">
-
-                    <Spinner
-                        android:id="@+id/departmentSpinner"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"/>
-                </FrameLayout>
-
-                <!-- Department manual input (if Other selected) -->
-                <EditText
-                    android:id="@+id/department"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:hint="Type your department"
-                    android:textSize="13sp"
-                    android:textColor="#1A1A2E"
-                    android:textColorHint="#BBBBBB"
+                    android:layout_height="52dp"
+                    android:hint="Type or Select Department"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
                     android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
                     android:background="@drawable/bg_input_white"
-                    android:visibility="gone"
+                    android:completionThreshold="1"
                     android:layout_marginBottom="16dp"/>
 
                 <!-- ADMISSION YEAR -->
@@ -153,45 +131,36 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Admission Year"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     android:textStyle="bold"
-                    android:textColor="#555555"
+                    android:textColor="@color/primary"
                     android:layout_marginBottom="6dp"/>
 
-                <FrameLayout
+                <Spinner
+                    android:id="@+id/admissionYearSpinner"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="52dp"
                     android:background="@drawable/bg_input_white"
-                    android:layout_marginBottom="16dp">
-
-                    <Spinner
-                        android:id="@+id/admissionYearSpinner"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"/>
-                </FrameLayout>
+                    android:layout_marginBottom="16dp"/>
 
                 <!-- PHONE -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Phone Number"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     android:textStyle="bold"
-                    android:textColor="#555555"
+                    android:textColor="@color/primary"
                     android:layout_marginBottom="6dp"/>
 
                 <EditText
                     android:id="@+id/phone"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="52dp"
                     android:hint="03XXXXXXXXX"
-                    android:textSize="13sp"
-                    android:textColor="#1A1A2E"
-                    android:textColorHint="#BBBBBB"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
                     android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
                     android:background="@drawable/bg_input_white"
                     android:inputType="phone"
                     android:layout_marginBottom="16dp"/>
@@ -201,9 +170,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Gender"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     android:textStyle="bold"
-                    android:textColor="#555555"
+                    android:textColor="@color/primary"
                     android:layout_marginBottom="10dp"/>
 
                 <RadioGroup
@@ -213,50 +182,24 @@
                     android:orientation="horizontal"
                     android:layout_marginBottom="24dp">
 
-                    <RadioButton
-                        android:id="@+id/male"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Male"
-                        android:textSize="13sp"
-                        android:textColor="#333333"/>
-
-                    <RadioButton
-                        android:id="@+id/female"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Female"
-                        android:textSize="13sp"
-                        android:textColor="#333333"
-                        android:layout_marginStart="20dp"/>
-
-                    <RadioButton
-                        android:id="@+id/other"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Other"
-                        android:textSize="13sp"
-                        android:textColor="#333333"
-                        android:layout_marginStart="20dp"/>
-
+                    <RadioButton android:id="@+id/male" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Male" android:textColor="@color/black"/>
+                    <RadioButton android:id="@+id/female" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Female" android:textColor="@color/black" android:layout_marginStart="20dp"/>
+                    <RadioButton android:id="@+id/other" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Other" android:textColor="@color/black" android:layout_marginStart="20dp"/>
                 </RadioGroup>
 
                 <!-- SUBMIT BUTTON -->
                 <Button
                     android:id="@+id/submitBtn"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:text="Continue"
-                    android:textSize="15sp"
+                    android:layout_height="56dp"
+                    android:text="Finish &amp; Start Matching"
+                    android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/white"
                     android:background="@drawable/bg_button_green"
-                    android:letterSpacing="0.05"/>
+                    android:elevation="4dp"/>
 
             </LinearLayout>
-
         </androidx.cardview.widget.CardView>
-
     </LinearLayout>
-
 </ScrollView>

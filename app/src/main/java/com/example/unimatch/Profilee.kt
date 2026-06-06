@@ -2,11 +2,15 @@ package com.example.unimatch
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.View
+import android.view.animation.AnticipateOvershootInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FieldValue
 
 class Profilee : AppCompatActivity() {
 
@@ -16,14 +20,15 @@ class Profilee : AppCompatActivity() {
     private lateinit var admissionYearSpinner: Spinner
     private lateinit var phoneField: EditText
     private lateinit var updateBtn: Button
-
+    private lateinit var nameInitial: TextView
     private lateinit var headerName: TextView
     private lateinit var headerDept: TextView
+    private lateinit var profileLayout: View
+    private lateinit var infoCard: View
 
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
-    // ✅ Store original values to detect changes
     private var originalName = ""
     private var originalRegNo = ""
     private var originalDept = ""
@@ -31,30 +36,17 @@ class Profilee : AppCompatActivity() {
     private var originalPhone = ""
 
     private val departments = listOf(
-        "Select Department",
-        "Computer Science",
-        "Software Engineering",
-        "Electrical Engineering",
-        "Electronics Engineering",
-        "Mechanical Engineering",
-        "Civil Engineering",
-        "Chemical Engineering",
-        "Petroleum & Gas Engineering",
-        "Industrial & Manufacturing Engineering",
-        "Materials Engineering",
-        "Environmental Engineering",
-        "Architecture",
-        "City & Regional Planning",
-        "Engineering Management",
-        "Basic Sciences & Humanities",
-        "Mathematics",
-        "Physics",
-        "Chemistry",
-        "Other"
-    )
+        "Architecture", "Artificial Intelligence", "Biology", "Business Administration",
+        "Chemical Engineering", "Chemistry", "Civil Engineering", "Computer Science",
+        "Data Science", "Economics", "Electrical Engineering", "Electronics Engineering",
+        "Engineering Management", "Environmental Engineering", "Fine Arts",
+        "Geological Engineering", "Industrial Engineering", "Information Technology",
+        "Mathematics", "Mechanical Engineering", "Mechatronics Engineering",
+        "Metallurgical Engineering", "Mining Engineering", "Petroleum Engineering",
+        "Physics", "Polymer Engineering", "Software Engineering", "Textile Engineering", "Other"
+    ).sorted()
 
-    private val years = listOf("Select Year") +
-            (1980..2030).map { it.toString() }.reversed()
+    private val years = listOf("Select Year") + (1980..2030).map { it.toString() }.reversed()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,23 +58,61 @@ class Profilee : AppCompatActivity() {
         admissionYearSpinner = findViewById(R.id.admissionYearSpinner)
         phoneField = findViewById(R.id.phone)
         updateBtn = findViewById(R.id.updateBtn)
+        nameInitial = findViewById(R.id.nameInitial)
         headerName = findViewById(R.id.headerName)
         headerDept = findViewById(R.id.headerDept)
+        profileLayout = findViewById(R.id.profileLayout)
+        infoCard = findViewById(R.id.infoCard)
 
         setupSpinners()
+        setupAnimations()
         loadProfile()
 
-        nameField.addTextChangedListener(SimpleTextWatcher {
-            headerName.text = it.ifEmpty { "Your Name" }
+        nameField.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val firstChar = s?.toString()?.trim()?.firstOrNull()?.uppercase() ?: "U"
+                nameInitial.text = firstChar
+            }
+            override fun afterTextChanged(s: Editable?) {}
         })
 
-        updateBtn.setOnClickListener {
-            updateProfile()
-        }
+        updateBtn.setOnClickListener { validateAndUpdate() }
+    }
+
+    private fun setupAnimations() {
+        profileLayout.alpha = 0f
+        infoCard.translationY = 800f
+        nameInitial.scaleX = 0f
+        nameInitial.scaleY = 0f
+        updateBtn.alpha = 0f
+
+        profileLayout.animate().alpha(1f).setDuration(800).start()
+
+        infoCard.animate()
+            .translationY(0f)
+            .setDuration(1200)
+            .setInterpolator(AnticipateOvershootInterpolator(1.0f))
+            .start()
+
+        nameInitial.animate()
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(1000)
+            .setStartDelay(400)
+            .setInterpolator(OvershootInterpolator())
+            .start()
+
+        updateBtn.animate()
+            .alpha(1f)
+            .setDuration(600)
+            .setStartDelay(1000)
+            .start()
     }
 
     private fun setupSpinners() {
-        val deptAdapter = ArrayAdapter(this, R.layout.spinner_item, departments)
+        val deptListWithDefault = listOf("Select Department") + departments
+        val deptAdapter = ArrayAdapter(this, R.layout.spinner_item, deptListWithDefault)
         deptAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
         departmentSpinner.adapter = deptAdapter
 
@@ -93,121 +123,92 @@ class Profilee : AppCompatActivity() {
 
     private fun loadProfile() {
         val uid = auth.currentUser?.uid ?: return
+        db.collection("users").document(uid).get().addOnSuccessListener { doc ->
+            originalName = doc.getString("name") ?: ""
+            originalRegNo = doc.getString("regNo") ?: ""
+            originalDept = doc.getString("department") ?: ""
+            originalYear = doc.getString("admissionYear") ?: ""
+            originalPhone = doc.getString("phone") ?: ""
 
-        db.collection("users").document(uid).get()
-            .addOnSuccessListener { doc ->
-                if (doc.exists()) {
-                    val n = doc.getString("name") ?: ""
-                    val d = doc.getString("department") ?: ""
+            nameField.setText(originalName)
+            regNoField.setText(originalRegNo)
+            phoneField.setText(originalPhone)
 
-                    val y = when (val raw = doc.get("admissionYear")) {
-                        is String -> raw
-                        is Long -> raw.toString()
-                        is Int -> raw.toString()
-                        else -> ""
-                    }
+            headerName.text = originalName
+            headerDept.text = originalDept
+            nameInitial.text = originalName.trim().firstOrNull()?.uppercase().toString().ifEmpty { "U" }
 
-                    val r = doc.getString("regNo") ?: ""
-                    val p = doc.getString("phone") ?: ""
-
-                    nameField.setText(n)
-                    regNoField.setText(r)
-                    phoneField.setText(p)
-
-                    headerName.text = n.ifEmpty { "Your Name" }
-                    headerDept.text = d.ifEmpty { "Department" }
-
-                    val deptIndex = departments.indexOf(d)
-                    if (deptIndex >= 0) departmentSpinner.setSelection(deptIndex)
-
-                    val yearIndex = years.indexOf(y)
-                    if (yearIndex >= 0) admissionYearSpinner.setSelection(yearIndex)
-
-                    // ✅ Save originals AFTER loading
-                    originalName = n
-                    originalRegNo = r
-                    originalDept = d
-                    originalYear = y
-                    originalPhone = p
-                }
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to load profile", Toast.LENGTH_SHORT).show()
-            }
+            setSpinner(departmentSpinner, originalDept)
+            setSpinner(admissionYearSpinner, originalYear)
+        }
     }
 
-    private fun updateProfile() {
-        val uid = auth.currentUser?.uid ?: return
+    private fun setSpinner(spinner: Spinner, value: String) {
+        val adapter = spinner.adapter ?: return
+        for (i in 0 until adapter.count) {
+            if (adapter.getItem(i).toString() == value) {
+                spinner.setSelection(i)
+                break
+            }
+        }
+    }
 
+    private fun validateAndUpdate() {
         val n = nameField.text.toString().trim()
-        val r = regNoField.text.toString().trim()
-        val d = departmentSpinner.selectedItem.toString()
-        val yString = admissionYearSpinner.selectedItem.toString()
+        val r = regNoField.text.toString().trim().lowercase()
         val p = phoneField.text.toString().trim()
+        val d = departmentSpinner.selectedItem.toString()
+        val y = admissionYearSpinner.selectedItem.toString()
 
-        // Validations
-        if (n.isEmpty()) { nameField.error = "Required"; return }
-        if (r.isEmpty()) { regNoField.error = "Required"; return }
-        if (d == "Select Department") {
-            Toast.makeText(this, "Select department", Toast.LENGTH_SHORT).show()
+        if (n == originalName && r == originalRegNo && p == originalPhone && d == originalDept && y == originalYear) {
+            Toast.makeText(this, "No changes detected", Toast.LENGTH_SHORT).show()
+            finish()
             return
         }
-        if (yString == "Select Year") {
-            Toast.makeText(this, "Select year", Toast.LENGTH_SHORT).show()
-            return
+
+        if (!n.matches(Regex("^[a-zA-Z\\s]+$"))) {
+            nameField.error = "Invalid name"; return
         }
-        if (p.isEmpty()) { phoneField.error = "Required"; return }
-
-        // ✅ Check if anything actually changed
-        val hasChanges = n != originalName ||
-                r != originalRegNo ||
-                d != originalDept ||
-                yString != originalYear ||
-                p != originalPhone
-
-        if (!hasChanges) {
-            Toast.makeText(this, "Nothing to update", Toast.LENGTH_SHORT).show()
-            // ✅ Navigate to InterestActivity even if nothing changed
-            startActivity(Intent(this, InterestActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            })
-            return
+        if (!r.matches(Regex("^\\d{4}-[a-zA-Z]+-\\d{1,4}$"))) {
+            regNoField.error = "Format: 2023-CS-130"; return
+        }
+        if (!p.matches(Regex("^(03\\d{9}|\\+92\\d{10})$"))) {
+            phoneField.error = "Invalid phone"; return
         }
 
         updateBtn.isEnabled = false
 
-        val updates = hashMapOf<String, Any>(
+        if (r != originalRegNo) {
+            db.collection("users").whereEqualTo("regNo", r).get().addOnSuccessListener { docs ->
+                if (!docs.isEmpty) {
+                    regNoField.error = "Registration number already exists"
+                    updateBtn.isEnabled = true
+                } else {
+                    saveChanges(n, r, d, y, p)
+                }
+            }
+        } else {
+            saveChanges(n, r, d, y, p)
+        }
+    }
+
+    private fun saveChanges(n: String, r: String, d: String, y: String, p: String) {
+        val uid = auth.currentUser?.uid ?: return
+        val updates = mapOf(
             "name" to n,
             "regNo" to r,
             "department" to d,
-            "admissionYear" to yString,
-            "phone" to p,
-            "updatedAt" to FieldValue.serverTimestamp()
+            "admissionYear" to y,
+            "phone" to p
         )
 
-        db.collection("users").document(uid)
-            .update(updates)
-            .addOnSuccessListener {
-                updateBtn.isEnabled = true
-                headerDept.text = d
-
-                // ✅ Update originals after successful save
-                originalName = n
-                originalRegNo = r
-                originalDept = d
-                originalYear = yString
-                originalPhone = p
-
-                Toast.makeText(this, "Profile updated!", Toast.LENGTH_SHORT).show()
-
-                // ✅ Navigate to InterestActivity after toast
-                startActivity(Intent(this, InterestActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                })
-            }
-            .addOnFailureListener {
-                updateBtn.isEnabled = true
-                Toast.makeText(this, "Update failed: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
+        db.collection("users").document(uid).update(updates).addOnSuccessListener {
+            Toast.makeText(this, "Profile updated!", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, DashBoardActivity::class.java))
+            finish()
+        }.addOnFailureListener {
+            updateBtn.isEnabled = true
+            Toast.makeText(this, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 }

@@ -1,18 +1,24 @@
 package com.example.unimatch
 
-import android.graphics.Color
+import android.content.Context
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import java.util.*
+import kotlin.collections.ArrayList
 
 class InterestAdapter(
-    private val list: ArrayList<Interest>,
-    private val onSelectionChanged: (Int) -> Unit  // ✅ callback
+    private var list: ArrayList<Interest>,
+    private val onSelectionChanged: (Int) -> Unit
 ) : RecyclerView.Adapter<InterestAdapter.ViewHolder>() {
+
+    private var filteredList: ArrayList<Interest> = ArrayList(list)
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val title: TextView = view.findViewById(R.id.txtInterest)
@@ -28,39 +34,50 @@ class InterestAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = list[position]
-
+        val item = filteredList[position]
         holder.title.text = item.name
-
-        if (item.isSelected) {
-            holder.card.setCardBackgroundColor(Color.parseColor("#FAEAFA"))
-            holder.title.setTextColor(Color.parseColor("#2E7D32"))
-            holder.title.paint.isFakeBoldText = true
-            holder.dot.setBackgroundColor(Color.parseColor("#2E7D32"))
-        } else {
-            holder.card.setCardBackgroundColor(Color.WHITE)
-            holder.title.setTextColor(Color.parseColor("#1A1A2E"))
-            holder.title.paint.isFakeBoldText = false
-            holder.dot.setBackgroundColor(Color.parseColor("#FAEAFA"))
-        }
-
         holder.checkBox.setOnCheckedChangeListener(null)
         holder.checkBox.isChecked = item.isSelected
-
-        holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
-            item.isSelected = isChecked
-            // ✅ notify count change
-            onSelectionChanged(list.count { it.isSelected })
-            holder.itemView.post { notifyItemChanged(position) }
-        }
+        updateUI(holder, item, holder.itemView.context)
 
         holder.card.setOnClickListener {
             item.isSelected = !item.isSelected
-            // ✅ notify count change
+            holder.checkBox.isChecked = item.isSelected
+            updateUI(holder, item, holder.itemView.context)
             onSelectionChanged(list.count { it.isSelected })
-            holder.itemView.post { notifyItemChanged(position) }
+        }
+
+        holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
+            item.isSelected = isChecked
+            updateUI(holder, item, holder.itemView.context)
+            onSelectionChanged(list.count { it.isSelected })
         }
     }
 
-    override fun getItemCount(): Int = list.size
+    private fun updateUI(holder: ViewHolder, item: Interest, context: Context) {
+        if (item.isSelected) {
+            holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.mint))
+            holder.title.setTextColor(ContextCompat.getColor(context, R.color.primary))
+        } else {
+            holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
+            holder.title.setTextColor(ContextCompat.getColor(context, R.color.black))
+        }
+    }
+
+    override fun getItemCount(): Int = filteredList.size
+
+    fun filter(query: String) {
+        filteredList = if (query.isEmpty()) {
+            ArrayList(list)
+        } else {
+            val resultList = ArrayList<Interest>()
+            for (item in list) {
+                if (item.name.lowercase(Locale.ROOT).contains(query.lowercase(Locale.ROOT))) {
+                    resultList.add(item)
+                }
+            }
+            resultList
+        }
+        notifyDataSetChanged()
+    }
 }
