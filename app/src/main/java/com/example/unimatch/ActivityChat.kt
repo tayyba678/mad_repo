@@ -1,24 +1,19 @@
 package com.example.unimatch
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
+import androidx.activity.OnBackPressedCallback
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 
-class ActivityChat : AppCompatActivity() {
+class ActivityChat : BaseActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var etMessage: EditText
@@ -72,18 +67,29 @@ class ActivityChat : AppCompatActivity() {
 
         btnSend.setOnClickListener { sendMessage() }
         
-        btnLeave.setOnClickListener {
-            if (isTaskRoot) {
-                startActivity(Intent(this, DashBoardActivity::class.java))
+        // Navigate back to Dashboard
+        btnLeave.setOnClickListener { navigateToDashboard() }
+        
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navigateToDashboard()
             }
-            finish()
-        }
+        })
 
         llUserHeader.setOnClickListener {
             isDetailVisible = !isDetailVisible
             tvUserDetail.visibility = if (isDetailVisible) View.VISIBLE else View.GONE
         }
     }
+
+    private fun navigateToDashboard() {
+        val intent = Intent(this, DashBoardActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        startActivity(intent)
+        finish()
+    }
+
+    override fun getActiveChatId(): String? = chatId
 
     private fun sendMessage() {
         val text = etMessage.text.toString().trim()
@@ -98,6 +104,7 @@ class ActivityChat : AppCompatActivity() {
         val chatMeta = mapOf(
             "lastMessage" to text,
             "timestamp" to timestamp,
+            "lastSenderId" to uid,
             "users" to listOf(uid, matchUid)
         )
         db.collection("chats").document(chatId).set(chatMeta, SetOptions.merge())
@@ -109,7 +116,6 @@ class ActivityChat : AppCompatActivity() {
         db.collection("chats").document(chatId).collection("messages")
             .orderBy("timestamp")
             .addSnapshotListener { value, _ ->
-                val oldSize = messages.size
                 messages.clear()
                 value?.forEach { doc ->
                     val m = doc.toObject(Message::class.java)
@@ -118,35 +124,8 @@ class ActivityChat : AppCompatActivity() {
                 adapter.notifyDataSetChanged()
                 if (messages.isNotEmpty()) {
                     recyclerView.scrollToPosition(messages.size - 1)
-                    
-                    if (messages.size > oldSize && oldSize != 0) {
-                        val last = messages.last()
-                        if (last.senderId == matchUid) {
-                            sendNotification(tvUserName.text.toString(), last.message)
-                        }
-                    }
                 }
             }
-    }
-
-    private fun sendNotification(title: String, body: String) {
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val channelId = "chat_notifications"
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(channelId, "Chat Notifications", NotificationManager.IMPORTANCE_DEFAULT)
-            notificationManager.createNotificationChannel(channel)
-        }
-
-        val notification = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.logo)
-            .setContentTitle(title)
-            .setContentText(body)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setAutoCancel(true)
-            .build()
-
-        notificationManager.notify(System.currentTimeMillis().toInt(), notification)
     }
 
     private fun loadOtherUser() {
@@ -157,6 +136,7 @@ class ActivityChat : AppCompatActivity() {
             val phone = doc.getString("phone") ?: "No Phone"
 
             tvUserName.text = name
+            // CONFIDENTIALITY: Show Department instead of RegNo
             tvUserDetail.text = String.format("%s | %s", dept, phone)
             
             tvInitial.visibility = View.VISIBLE

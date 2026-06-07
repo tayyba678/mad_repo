@@ -8,21 +8,19 @@ import android.view.View
 import android.view.animation.AnticipateOvershootInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class Profilee : AppCompatActivity() {
+class Profilee : BaseActivity() {
 
     private lateinit var nameField: EditText
-    private lateinit var regNoField: EditText
     private lateinit var departmentSpinner: Spinner
     private lateinit var admissionYearSpinner: Spinner
     private lateinit var phoneField: EditText
     private lateinit var updateBtn: Button
     private lateinit var nameInitial: TextView
     private lateinit var headerName: TextView
-    private lateinit var headerDept: TextView
+    private lateinit var headerRegNo: TextView
     private lateinit var profileLayout: View
     private lateinit var infoCard: View
 
@@ -30,10 +28,10 @@ class Profilee : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
 
     private var originalName = ""
-    private var originalRegNo = ""
     private var originalDept = ""
     private var originalYear = ""
     private var originalPhone = ""
+    private var userRegNo = ""
 
     private val departments = listOf(
         "Architecture", "Artificial Intelligence", "Biology", "Business Administration",
@@ -53,14 +51,13 @@ class Profilee : AppCompatActivity() {
         setContentView(R.layout.activity_profilee)
 
         nameField = findViewById(R.id.name)
-        regNoField = findViewById(R.id.regNo)
         departmentSpinner = findViewById(R.id.departmentSpinner)
         admissionYearSpinner = findViewById(R.id.admissionYearSpinner)
         phoneField = findViewById(R.id.phone)
         updateBtn = findViewById(R.id.updateBtn)
         nameInitial = findViewById(R.id.nameInitial)
         headerName = findViewById(R.id.headerName)
-        headerDept = findViewById(R.id.headerDept)
+        headerRegNo = findViewById(R.id.headerRegNo)
         profileLayout = findViewById(R.id.profileLayout)
         infoCard = findViewById(R.id.infoCard)
 
@@ -88,26 +85,9 @@ class Profilee : AppCompatActivity() {
         updateBtn.alpha = 0f
 
         profileLayout.animate().alpha(1f).setDuration(800).start()
-
-        infoCard.animate()
-            .translationY(0f)
-            .setDuration(1200)
-            .setInterpolator(AnticipateOvershootInterpolator(1.0f))
-            .start()
-
-        nameInitial.animate()
-            .scaleX(1f)
-            .scaleY(1f)
-            .setDuration(1000)
-            .setStartDelay(400)
-            .setInterpolator(OvershootInterpolator())
-            .start()
-
-        updateBtn.animate()
-            .alpha(1f)
-            .setDuration(600)
-            .setStartDelay(1000)
-            .start()
+        infoCard.animate().translationY(0f).setDuration(1200).setInterpolator(AnticipateOvershootInterpolator(1.0f)).start()
+        nameInitial.animate().scaleX(1f).scaleY(1f).setDuration(1000).setStartDelay(400).setInterpolator(OvershootInterpolator()).start()
+        updateBtn.animate().alpha(1f).setDuration(600).setStartDelay(1000).start()
     }
 
     private fun setupSpinners() {
@@ -125,17 +105,15 @@ class Profilee : AppCompatActivity() {
         val uid = auth.currentUser?.uid ?: return
         db.collection("users").document(uid).get().addOnSuccessListener { doc ->
             originalName = doc.getString("name") ?: ""
-            originalRegNo = doc.getString("regNo") ?: ""
+            userRegNo = doc.getString("regNo") ?: "XXXX-AA-XX"
             originalDept = doc.getString("department") ?: ""
             originalYear = doc.getString("admissionYear") ?: ""
             originalPhone = doc.getString("phone") ?: ""
 
             nameField.setText(originalName)
-            regNoField.setText(originalRegNo)
-            phoneField.setText(originalPhone)
-
+            phoneField.setText(originalPhone) 
             headerName.text = originalName
-            headerDept.text = originalDept
+            headerRegNo.text = userRegNo
             nameInitial.text = originalName.trim().firstOrNull()?.uppercase().toString().ifEmpty { "U" }
 
             setSpinner(departmentSpinner, originalDept)
@@ -155,48 +133,31 @@ class Profilee : AppCompatActivity() {
 
     private fun validateAndUpdate() {
         val n = nameField.text.toString().trim()
-        val r = regNoField.text.toString().trim().lowercase()
         val p = phoneField.text.toString().trim()
         val d = departmentSpinner.selectedItem.toString()
         val y = admissionYearSpinner.selectedItem.toString()
 
-        if (n == originalName && r == originalRegNo && p == originalPhone && d == originalDept && y == originalYear) {
+        if (n == originalName && p == originalPhone && d == originalDept && y == originalYear) {
             Toast.makeText(this, "No changes detected", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
-        if (!n.matches(Regex("^[a-zA-Z\\s]+$"))) {
+        if (!ValidationUtils.isValidName(n)) {
             nameField.error = "Invalid name"; return
         }
-        if (!r.matches(Regex("^\\d{4}-[a-zA-Z]+-\\d{1,4}$"))) {
-            regNoField.error = "Format: 2023-CS-130"; return
-        }
-        if (!p.matches(Regex("^(03\\d{9}|\\+92\\d{10})$"))) {
+        if (!ValidationUtils.isValidPhone(p)) {
             phoneField.error = "Invalid phone"; return
         }
 
         updateBtn.isEnabled = false
-
-        if (r != originalRegNo) {
-            db.collection("users").whereEqualTo("regNo", r).get().addOnSuccessListener { docs ->
-                if (!docs.isEmpty) {
-                    regNoField.error = "Registration number already exists"
-                    updateBtn.isEnabled = true
-                } else {
-                    saveChanges(n, r, d, y, p)
-                }
-            }
-        } else {
-            saveChanges(n, r, d, y, p)
-        }
+        saveChanges(n, d, y, p)
     }
 
-    private fun saveChanges(n: String, r: String, d: String, y: String, p: String) {
+    private fun saveChanges(n: String, d: String, y: String, p: String) {
         val uid = auth.currentUser?.uid ?: return
         val updates = mapOf(
             "name" to n,
-            "regNo" to r,
             "department" to d,
             "admissionYear" to y,
             "phone" to p

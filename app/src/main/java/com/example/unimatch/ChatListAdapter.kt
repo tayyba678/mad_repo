@@ -15,6 +15,7 @@ class ChatListAdapter(
         val name: TextView = itemView.findViewById(R.id.name)
         val lastMsg: TextView = itemView.findViewById(R.id.lastMsg)
         val initial: TextView = itemView.findViewById(R.id.initial)
+        val userDetail: TextView = itemView.findViewById(R.id.userDetail)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -28,6 +29,9 @@ class ChatListAdapter(
 
         holder.name.text = user.name
         holder.lastMsg.text = user.lastMessage
+        
+        // Show Dept and Phone for confidentiality
+        holder.userDetail.text = String.format("%s | %s", user.department, user.phone)
 
         // Display the first letter of the name
         holder.initial.text = user.name.trim().firstOrNull()?.uppercase().toString().ifEmpty { "U" }

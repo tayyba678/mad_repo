@@ -8,11 +8,10 @@ import android.view.View
 import android.view.animation.AnticipateOvershootInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class User_registration : AppCompatActivity() {
+class User_registration : BaseActivity() {
 
     private lateinit var name: EditText
     private lateinit var regNo: EditText
@@ -61,7 +60,6 @@ class User_registration : AppCompatActivity() {
         setupYearSpinner()
         setupAnimations()
 
-        // Update initial circle as user types name
         name.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -128,13 +126,13 @@ class User_registration : AppCompatActivity() {
         val y = admissionYearSpinner.selectedItem.toString()
         val selectedGenderId = genderGroup.checkedRadioButtonId
 
-        if (!n.matches(Regex("^[a-zA-Z\\s]+$"))) {
+        if (!ValidationUtils.isValidName(n)) {
             name.error = "Name should only contain letters"; return
         }
-        if (!r.matches(Regex("^\\d{4}-[a-zA-Z]+-\\d{1,4}$"))) {
-            regNo.error = "Format: 2023-CS-130"; return
+        if (!ValidationUtils.isValidRegNo(r)) {
+            regNo.error = "Format: XXXX-AA-XX"; return
         }
-        if (!p.matches(Regex("^(03\\d{9}|\\+92\\d{10})$"))) {
+        if (!ValidationUtils.isValidPhone(p)) {
             phone.error = "Use 03XXXXXXXXX or +92XXXXXXXXXX"; return
         }
         if (d.isEmpty()) {

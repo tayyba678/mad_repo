@@ -3,16 +3,13 @@ package com.example.unimatch
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.view.animation.LayoutAnimationController
-import android.view.animation.AnimationUtils
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
-class ChatListActivity : AppCompatActivity() {
+class ChatListActivity : BaseActivity() {
 
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: ChatListAdapter
@@ -48,8 +45,6 @@ class ChatListActivity : AppCompatActivity() {
     private fun setupAnimations() {
         header.translationY = -200f
         header.animate().translationY(0f).setDuration(600).start()
-        
-        // Simple scale and fade for the recycler view
         recycler.alpha = 0f
         recycler.animate().alpha(1f).setDuration(1000).setStartDelay(300).start()
     }
@@ -59,39 +54,44 @@ class ChatListActivity : AppCompatActivity() {
 
         db.collection("chats")
             .whereArrayContains("users", currentUid)
-            .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, e ->
                 if (e != null || snapshots == null) return@addSnapshotListener
 
-                list.clear()
                 if (snapshots.isEmpty) {
                     noChatText.visibility = View.VISIBLE
                     recycler.visibility = View.GONE
+                    list.clear()
+                    adapter.notifyDataSetChanged()
                     return@addSnapshotListener
                 }
 
                 noChatText.visibility = View.GONE
                 recycler.visibility = View.VISIBLE
 
-                for (doc in snapshots.documents) {
-                    val users = doc.get("users") as? List<String> ?: continue
+                snapshots.documents.forEach { doc ->
+                    val users = doc.get("users") as? List<String> ?: return@forEach
                     val lastMsg = doc.getString("lastMessage") ?: ""
-                    val otherUid = users.firstOrNull { it != currentUid } ?: continue
+                    val timestamp = doc.getLong("timestamp") ?: 0L
+                    val otherUid = users.firstOrNull { it != currentUid } ?: return@forEach
 
                     db.collection("users").document(otherUid).get().addOnSuccessListener { userDoc ->
                         val name = userDoc.getString("name") ?: "User"
-                        val profileImage = userDoc.getString("profileImage") ?: ""
+                        val dept = userDoc.getString("department") ?: "No Dept"
+                        val phone = userDoc.getString("phone") ?: "No Phone"
                         
-                        val existing = list.find { it.uid == otherUid }
-                        if (existing == null) {
-                            list.add(ChatUser(otherUid, name, lastMsg, profileImage))
-                            list.sortByDescending { doc.getLong("timestamp") }
-                            adapter.notifyDataSetChanged()
+                        // Pass all fields to ChatUser to fix constructor error and show info in history
+                        val newUser = ChatUser(otherUid, name, lastMsg, timestamp, dept, phone)
+                        
+                        val existingIndex = list.indexOfFirst { it.uid == otherUid }
+                        if (existingIndex != -1) {
+                            list[existingIndex] = newUser
                         } else {
-                            val index = list.indexOf(existing)
-                            list[index] = ChatUser(otherUid, name, lastMsg, profileImage)
-                            adapter.notifyItemChanged(index)
+                            list.add(newUser)
                         }
+
+                        // Always sort by newest message first
+                        list.sortByDescending { it.timestamp }
+                        adapter.notifyDataSetChanged()
                     }
                 }
             }

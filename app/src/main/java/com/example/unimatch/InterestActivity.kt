@@ -9,7 +9,6 @@ import android.view.animation.AnticipateOvershootInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -17,13 +16,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import java.util.*
 
-class InterestActivity : AppCompatActivity() {
+class InterestActivity : BaseActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var btnContinue: Button
     private lateinit var adapter: InterestAdapter
     private lateinit var selectedCount: TextView
-    private lateinit var headerCard: View
+    private lateinit var headerArea: View
     private lateinit var searchInterests: EditText
     private lateinit var searchCard: View
 
@@ -54,9 +53,9 @@ class InterestActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView)
         btnContinue = findViewById(R.id.btnContinue)
         selectedCount = findViewById(R.id.selectedCount)
-        headerCard = findViewById(R.id.headerCard)
+        headerArea = findViewById(R.id.headerArea)
         searchInterests = findViewById(R.id.searchInterests)
-        searchCard = searchInterests.parent.parent as View
+        searchCard = findViewById(R.id.searchCard)
 
         adapter = InterestAdapter(interests) { count ->
             selectedCount.text = "$count selected"
@@ -79,7 +78,7 @@ class InterestActivity : AppCompatActivity() {
     }
 
     private fun setupAnimations() {
-        headerCard.translationY = -300f
+        headerArea.translationY = -300f
         searchCard.translationY = 400f
         searchCard.alpha = 0f
         recyclerView.translationY = 600f
@@ -87,7 +86,7 @@ class InterestActivity : AppCompatActivity() {
         btnContinue.translationY = 200f
         btnContinue.alpha = 0f
 
-        headerCard.animate().translationY(0f).setDuration(800).setInterpolator(OvershootInterpolator()).start()
+        headerArea.animate().translationY(0f).setDuration(800).setInterpolator(OvershootInterpolator()).start()
         
         searchCard.animate().translationY(0f).alpha(1f).setDuration(800).setStartDelay(300).setInterpolator(OvershootInterpolator()).start()
         

@@ -51,7 +51,7 @@
                 android:id="@+id/tvUserDetail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dept | Phone"
+                android:text="XXXX-AA-XX | Phone"
                 android:textSize="12sp"
                 android:textColor="@color/mint"
                 android:visibility="gone"/>

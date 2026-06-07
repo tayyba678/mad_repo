@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/secondary"
+    android:background="@color/white"
     android:fillViewport="true">
 
     <LinearLayout
@@ -49,10 +49,10 @@
                 android:layout_marginTop="12dp"/>
 
             <TextView
-                android:id="@+id/headerDept"
+                android:id="@+id/headerRegNo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Department"
+                android:text="XXXX-AA-XX"
                 android:textColor="@color/mint"
                 android:textSize="14sp"
                 android:layout_marginTop="2dp"/>
@@ -104,29 +104,8 @@
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:background="@drawable/bg_input_white"
-                    android:layout_marginBottom="16dp"/>
-
-                <!-- REG NO -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Registration Number"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/primary"
-                    android:layout_marginBottom="6dp"/>
-
-                <EditText
-                    android:id="@+id/regNo"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:hint="e.g. 2021-CS-123"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/gray"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:background="@drawable/bg_input_white"
-                    android:layout_marginBottom="16dp"/>
+                    android:layout_marginBottom="16dp"
+                    android:inputType="textPersonName"/>
 
                 <!-- DEPARTMENT -->
                 <TextView
@@ -194,7 +173,8 @@
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:background="@drawable/bg_input_white"
-                    android:layout_marginBottom="28dp"/>
+                    android:layout_marginBottom="28dp"
+                    android:inputType="phone"/>
 
                 <!-- BUTTON -->
                 <Button

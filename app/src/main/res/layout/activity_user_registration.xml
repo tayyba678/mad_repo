@@ -97,7 +97,7 @@
                     android:id="@+id/regNo"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
-                    android:hint="e.g. 2023-CS-130"
+                    android:hint="e.g. XXXX-AA-XX"
                     android:textSize="15sp"
                     android:textColor="@color/black"
                     android:paddingStart="16dp"

@@ -1,86 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/secondary">
+    android:background="@color/white">
 
-    <!-- HEADER CARD -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/headerCard"
+    <!-- HEADER -->
+    <LinearLayout
+        android:id="@+id/headerArea"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="4dp"
-        app:cardBackgroundColor="@color/primary"
-        android:layout_marginBottom="8dp">
+        android:orientation="vertical"
+        android:padding="28dp"
+        android:background="@color/primary">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/headerTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp"
-            android:gravity="center">
+            android:text="Choose Your Interests"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Select Your Interests"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="@color/white"/>
-
-            <TextView
-                android:id="@+id/selectedCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0 selected"
-                android:textSize="14sp"
-                android:textColor="@color/mint"
-                android:layout_marginTop="4dp"/>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/selectedCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 selected"
+            android:textSize="15sp"
+            android:textColor="@color/mint"
+            android:layout_marginTop="6dp"/>
+    </LinearLayout>
 
     <!-- SEARCH BAR -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/searchCard"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="2dp">
+        android:layout_height="56dp"
+        android:layout_below="@id/headerArea"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="#F1F3F4">
 
         <EditText
             android:id="@+id/searchInterests"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="Search skills (e.g. Kotlin, Python...)"
+            android:layout_height="match_parent"
+            android:hint="Search skills, tech, or hobbies..."
             android:background="@android:color/transparent"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:drawableStart="@android:drawable/ic_menu_search"
             android:drawablePadding="12dp"
-            android:textSize="14sp"
-            android:inputType="text"/>
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray"
+            android:textSize="16sp"
+            android:inputType="text"
+            app:drawableTint="@color/primary" />
     </androidx.cardview.widget.CardView>
 
+    <!-- RECYCLER VIEW -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
+        android:layout_height="match_parent"
+        android:layout_below="@id/searchCard"
+        android:layout_above="@id/btnContinue"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
         android:clipToPadding="false"
-        android:paddingBottom="80dp"/>
+        android:paddingBottom="12dp"/>
 
+    <!-- CONTINUE BUTTON -->
     <Button
         android:id="@+id/btnContinue"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_margin="16dp"
-        android:text="Continue"
+        android:layout_height="58dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="24dp"
+        android:text="Save &amp; Continue"
+        android:textSize="17sp"
         android:textStyle="bold"
         android:textColor="@color/white"
-        android:background="@drawable/bg_button_green"/>
+        android:background="@drawable/bg_button_green"
+        android:elevation="10dp"
+        android:stateListAnimator="@null"/>
 
-</LinearLayout>
+</RelativeLayout>
